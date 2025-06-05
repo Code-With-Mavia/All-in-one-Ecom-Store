@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<style>body { padding-top: 70px; }</style>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About - SochSePak.pk Blog</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding-top: 75px; /* offset for fixed navbar */
+    }
+
+    .navbar {
+      background-color: #232f3e !important;
+    }
+
+    .navbar-brand,
+    .navbar-nav .nav-link {
+      color: #fff !important;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    .navbar-brand:hover,
+    .navbar-nav .nav-link:hover {
+      color: #febd69 !important;
+    }
+
+    .post-excerpt {
+      color: #555;
+      font-size: 1rem;
+    }
+
+    .post-date-author {
+      font-size: 0.85rem;
+      color: #888;
+    }
+
+    /* Star rating spacing */
+    .star {
+      font-size: 1.5rem;
+      margin-right: 4px;
+    }
+
+    /* Form spacing */
+    form .form-control,
+    form .form-range {
+      margin-bottom: 0.75rem;
+    }
+
+  </style>
+<style>
+nav.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1030; /* Bootstrap's default navbar z-index */
+}
+body {
+  padding-top: 56px;
+}
+</style>
+
+
+<body>
+  {% include "blog/navbar.html" %}
+
+  <div class="container py-4">
+    <!-- Unique Heading Line -->
+    <p class="text-muted fst-italic">Discover who we are and what makes SochSePak.pk Blog your trusted source.</p>
+
+    <h2>About Our Blog</h2>
+    <p class="lead">Welcome to the SochSePak.pk Blog – your go-to place for tips, trends, and insights.</p>
+    <p>We share articles to help you shop smarter, discover new trends, and get the most from your purchases.</p>
+
+    <hr>
+
+    <h4>Average Rating</h4>
+    <div class="mb-3">
+      {% for i in "12345" %}
+        {% if forloop.counter <= avg_rating|floatformat:0 %}
+          <span class="text-warning star">&#9733;</span> <!-- filled star -->
+        {% else %}
+          <span class="text-muted star">&#9733;</span> <!-- empty star -->
+        {% endif %}
+      {% endfor %}
+      <small>({{ avg_rating|floatformat:1 }} out of 5)</small>
+    </div>
+
+    <hr>
+
+    <h4>Rate Us</h4>
+    <form method="post" class="mb-4">
+      {% csrf_token %}
+      {{ rating_form.rating }}
+      <button name="rating_submit" type="submit" class="btn btn-primary btn-sm mt-2">Submit Rating</button>
+    </form>
+
+    <h4>Leave a Comment</h4>
+    <form method="post" class="mb-4">
+      {% csrf_token %}
+      {{ comment_form.name }}
+      {{ comment_form.email }}
+      {{ comment_form.comment }}
+      <button name="comment_submit" type="submit" class="btn btn-secondary btn-sm mt-2">Submit Comment</button>
+    </form>
+
+    <div>
+      {% for comment in comments %}
+      <div class="border rounded p-3 mb-3 bg-white shadow-sm">
+        <strong>{{ comment.name }}</strong> <small class="text-muted">{{ comment.date_posted|date:"M d, Y" }}</small>
+        <p>{{ comment.comment }}</p>
+      </div>
+      {% empty %}
+      <p>No comments yet. Be the first to comment!</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
+

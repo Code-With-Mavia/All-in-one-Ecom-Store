@@ -1,0 +1,145 @@
+{% load static %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<style>body { padding-top: 70px; }</style>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edit Post - {{ post.title }} - SochSePak.pk Blog</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding-top: 75px; /* If navbar fixed */
+    }
+    .navbar {
+      background-color: #232f3e !important;
+    }
+    .navbar-brand,
+    .navbar-nav .nav-link {
+      color: #fff !important;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+    .navbar-brand:hover,
+    .navbar-nav .nav-link:hover {
+      color: #febd69 !important;
+    }
+    .post-excerpt {
+      color: #555;
+      font-size: 1rem;
+    }
+    .post-date-author {
+      font-size: 0.85rem;
+      color: #888;
+    }
+
+    .image-wrapper {
+      max-width: 250px;
+      max-height: 200px;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #fff;
+      border-radius: 6px;
+      margin-top: 0.5rem;
+      border: 1px solid #ccc;
+    }
+
+    .current-image {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      image-rendering: -webkit-optimize-contrast;
+    }
+  </style>
+<style>
+nav.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1030; /* Bootstrap's default navbar z-index */
+}
+body {
+  padding-top: 56px;
+}
+</style>
+
+
+<body>
+  {% include "blog/navbar.html" %}
+
+  <div class="container py-5">
+    <h2 class="mb-4">Edit Post: {{ post.title }}</h2>
+
+    <form method="post" enctype="multipart/form-data" class="bg-white p-4 rounded shadow-sm">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <div class="mb-3">
+        <label for="{{ form.title.id_for_label }}" class="form-label">Title</label>
+        {{ form.title|add_class:"form-control" }}
+        {{ form.title.errors }}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ form.author.id_for_label }}" class="form-label">Author</label>
+        {{ form.author|add_class:"form-control" }}
+        {{ form.author.errors }}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ form.image.id_for_label }}" class="form-label">Change Image</label>
+        {{ form.image|add_class:"form-control" }}
+        {% if post.image %}
+          <div class="image-wrapper">
+            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="current-image" />
+          </div>
+        {% else %}
+          <small class="text-muted">No image uploaded.</small>
+        {% endif %}
+        {{ form.image.errors }}
+      </div>
+
+      <div class="mb-3 form-check">
+        <input type="checkbox" name="image_delete" id="id_image_delete" class="form-check-input" />
+        <label for="id_image_delete" class="form-check-label">Delete current image</label>
+        {% if post.image %}
+          <small class="text-muted d-block">Current image will be deleted if this box is checked.</small>
+        {% else %}
+          <small class="text-muted d-block">No current image to delete.</small>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ form.excerpt.id_for_label }}" class="form-label">Excerpt</label>
+        {{ form.excerpt|add_class:"form-control" }}
+        {{ form.excerpt.errors }}
+      </div>
+
+      <div class="mb-3">
+        <label for="{{ form.content.id_for_label }}" class="form-label">Content</label>
+        {{ form.content|add_class:"form-control" }}
+        {{ form.content.errors }}
+      </div>
+
+      <button type="submit" class="btn btn-success">Save Changes</button>
+      <a href="{% url 'blog_post_detail' post.slug %}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
+
