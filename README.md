@@ -144,7 +144,7 @@ Use the superuser credentials to manage products, blog posts, users, etc.
 ## 📬 Contact
 
 * GitHub: [github.com/code-with-mavia](https://github.com/code-with-mavia)
-* Email: `your-email@example.com` *(replace with your real contact)*
+* Email: `maviaqaiser09@gmailexample.com`
 
 ---
 
