@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>body { padding-top: 70px; }</style>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Shopping Cart - DukaanPak.pk Store</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .navbar {
+      background-color: #232f3e !important;
+    }
+
+    .navbar-brand,
+    .navbar-nav .nav-link {
+      color: #fff !important;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    .navbar-brand:hover,
+    .navbar-nav .nav-link:hover {
+      color: #febd69 !important;
+    }
+
+    h2 {
+      color: #232f3e;
+      font-weight: 800;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .table {
+      background-color: #fff;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .table thead {
+      background-color: #f1f1f1;
+      font-weight: 700;
+    }
+
+    .btn-danger.btn-sm {
+      font-weight: 600;
+    }
+
+    .btn-success.btn-sm,
+    .btn-primary {
+      background-color: #febd69;
+      border-color: #febd69;
+      color: #232f3e;
+      font-weight: 700;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-success.btn-sm:hover,
+    .btn-primary:hover {
+      background-color: #f3a847;
+      border-color: #f3a847;
+      color: #232f3e;
+    }
+
+    .cart-empty {
+      text-align: center;
+      font-size: 1.2rem;
+      font-style: italic;
+      color: #777;
+      margin-top: 3rem;
+    }
+
+    .text-end {
+      margin-top: 2rem;
+    }
+
+    .table td,
+    .table th {
+      vertical-align: middle;
+      text-align: center;
+    }
+  </style>
+<style>
+nav.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1030; /* Bootstrap's default navbar z-index */
+}
+body {
+  padding-top: 56px;
+}
+</style>
+
+<body>
+
+{% include 'shop/navbar.html' %}
+
+<div class="container mt-5">
+  <h2>Almost There! Review Your Picks Before You Buy</h2>
+
+
+  <!-- Flash Messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if cart_items %}
+  <table class="table table-bordered align-middle">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in cart_items %}
+      <tr>
+        <td>
+          {% if item.image %}
+            <img src="{{ item.image }}" alt="{{ item.name }}" style="width: 60px; height: 60px; object-fit: contain;" class="rounded" />
+          {% else %}
+            <img src="{% static 'default-product.png' %}" alt="No Image" style="width: 60px; height: 60px; object-fit: contain;" class="rounded" />
+          {% endif %}
+        </td>
+        <td>{{ item.name }}</td>
+        <td>Rs. {{ item.price|floatformat:2 }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>Rs. {{ item.subtotal|floatformat:2 }}</td>
+        <td>
+          <a href="{% url 'shop_cart' %}?add={{ item.id }}" class="btn btn-success btn-sm" title="Add one more">+</a>
+          <a href="{% url 'shop_cart' %}?remove={{ item.id }}" class="btn btn-danger btn-sm" title="Remove one">−</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h4 class="text-end">Total: Rs. {{ total|floatformat:2 }}</h4>
+
+  <div class="text-end">
+    <a href="{% url 'shop_checkout' %}" class="btn btn-primary btn-lg">Proceed to Checkout</a>
+  </div>
+
+  {% else %}
+  <div class="cart-empty">
+    Your cart is empty. <a href="{% url 'shop_home' %}">Go shopping</a>
+  </div>
+  {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,260 @@
+{% load static shop_extras %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<style>body { padding-top: 70px; }</style>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DukaanPak.pk - Shop Authentic Pakistani Products Online</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .navbar {
+      background-color: #232f3e !important;
+    }
+
+    .navbar-brand,
+    .navbar-nav .nav-link {
+      color: #fff !important;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    .navbar-brand:hover,
+    .navbar-nav .nav-link:hover {
+      color: #febd69 !important;
+    }
+
+    header.hero-section {
+      background: white;
+      padding: 3rem 0;
+      text-align: center;
+      box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+      margin-bottom: 2rem;
+      border-radius: 6px;
+      color: #232f3e;
+    }
+
+    header.hero-section h1 {
+      font-weight: 800;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    header.hero-section p {
+      font-size: 1.3rem;
+      color: #555;
+      font-style: italic;
+    }
+
+    .product-card {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background-color: #fff;
+      box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+      transition: box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .product-card:hover {
+      box-shadow: 0 6px 15px rgb(0 0 0 / 0.15);
+    }
+
+    .product-image-container {
+      height: 220px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+      overflow: hidden;
+    }
+
+    .product-image-container img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+    .product-body {
+      padding: 1rem;
+      flex-grow: 1;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .product-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #232f3e;
+      margin-bottom: 0.75rem;
+      min-height: 52px;
+    }
+
+    .product-price {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #b12704;
+      margin-bottom: 1rem;
+    }
+
+    .btn-primary {
+      background-color: #febd69;
+      border-color: #febd69;
+      color: #232f3e;
+      font-weight: 700;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #f3a847;
+      border-color: #f3a847;
+      color: #232f3e;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      border-color: #dc3545;
+      color: #fff;
+      font-weight: 700;
+      padding: 0 0.6rem;
+    }
+
+    .btn-danger:disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* Hide the actual number input box */
+    .qty-input {
+      display: none;
+    }
+  </style>
+<style>
+nav.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1030; /* Bootstrap's default navbar z-index */
+}
+body {
+  padding-top: 56px;
+}
+</style>
+
+
+<body>
+
+  <!-- Navbar -->
+  {% include 'shop/navbar.html' %}
+
+  <!-- Hero Section -->
+  <header class="hero-section container">
+    <h1>Welcome to DukaanPak.pk</h1>
+    <p>Shop authentic, high-quality products proudly made in Pakistan.</p>
+  </header>
+
+  <div class="container mb-5">
+
+    <form method="POST" action="{% url 'shop_add_multiple_to_cart' %}">
+      {% csrf_token %}
+
+      {% for category, products in categorized_products.items %}
+        <h2 class="mb-4">{{ category }}</h2>
+        <div class="row g-4 mb-5">
+          {% for product in products %}
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+              <div class="product-card">
+                <div class="product-image-container">
+                  {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                  {% else %}
+                    <img src="{% static 'default-product.png' %}" alt="No Image Available">
+                  {% endif %}
+                </div>
+                <div class="product-body">
+                  <div class="product-title">{{ product.name }}</div>
+                  <div class="product-price">Rs. {{ product.price }}</div>
+
+                  <div class="d-flex justify-content-center align-items-center gap-2">
+
+                    <!-- Minus button -->
+                    <button type="button" class="btn btn-danger btn-sm"
+                      onclick="changeQty('{{ product.id }}', -1)"
+                      {% if not cart_quantities|get_item:product.id or cart_quantities|get_item:product.id <= 0 %} disabled {% endif %}>−</button>
+
+                    <!-- Display quantity as text -->
+                    <span class="fs-5 fw-bold" id="display-qty-{{ product.id }}">
+                      {{ cart_quantities|get_item:product.id|default:"0" }}
+                    </span>
+
+                    <!-- Plus button -->
+                    <button type="button" class="btn btn-primary btn-sm"
+                      onclick="changeQty('{{ product.id }}', 1)">+</button>
+
+                    <!-- Hidden input to submit qty -->
+                    <input type="hidden" name="quantity_{{ product.id }}" id="qty-{{ product.id }}" value="{{ cart_quantities|get_item:product.id|default:"0" }}" />
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <div class="text-center mb-3">
+        <button type="submit" class="btn btn-success btn-lg">Add All to Cart</button>
+      </div>
+
+    </form>
+
+    <div class="text-center">
+      <a href="{% url 'shop_checkout' %}" class="btn btn-primary btn-lg">Go to Checkout</a>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    function changeQty(productId, delta) {
+      const hiddenInput = document.getElementById('qty-' + productId);
+      const displaySpan = document.getElementById('display-qty-' + productId);
+
+      let currentQty = parseInt(hiddenInput.value) || 0;
+      currentQty += delta;
+      if (currentQty < 0) currentQty = 0;
+
+      hiddenInput.value = currentQty;
+      displaySpan.textContent = currentQty;
+
+      // Enable/disable minus button based on qty
+      const minusBtn = document.querySelector(`button[onclick="changeQty('${productId}', -1)"]`);
+      if (currentQty <= 0) {
+        minusBtn.disabled = true;
+      } else {
+        minusBtn.disabled = false;
+      }
+    }
+  </script>
+
+</body>
+
+</html>
+

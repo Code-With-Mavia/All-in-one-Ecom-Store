@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<style>body { padding-top: 70px; }</style>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout - DukaanPak.pk Store</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .navbar {
+      background-color: #232f3e !important;
+    }
+
+    .navbar-brand,
+    .navbar-nav .nav-link {
+      color: #fff !important;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    .navbar-brand:hover,
+    .navbar-nav .nav-link:hover {
+      color: #febd69 !important;
+    }
+
+    header.page-header {
+      background: white;
+      padding: 2rem 0;
+      text-align: center;
+      box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+      margin-bottom: 2rem;
+      border-radius: 6px;
+      color: #232f3e;
+    }
+
+    main.checkout-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+      max-width: 700px;
+      margin: auto;
+      color: #555;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      background-color: #febd69;
+      border: none;
+      color: #232f3e;
+      font-weight: 600;
+      padding: 0.6rem 1.2rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #f3a847;
+    }
+
+    .order-summary {
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 6px;
+      color: #856404;
+      font-weight: 600;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.25rem 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .alert {
+      border-radius: 6px;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+<style>
+nav.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1030; /* Bootstrap's default navbar z-index */
+}
+body {
+  padding-top: 56px;
+}
+</style>
+
+
+<body>
+  {% include 'shop/navbar.html' %}
+
+  <header class="page-header container">
+    <h1>Seal the Deal — Finalize Your Order</h1>
+  </header>
+
+  <main class="checkout-container">
+
+    <!-- Flash Messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Order Summary -->
+    <div class="order-summary">
+      <h4>Your Cart</h4>
+      {% if cart_items %}
+        {% for item in cart_items %}
+          <div class="cart-item">
+            <div>{{ item.name }} (x{{ item.quantity }})</div>
+            <div>Rs. {{ item.subtotal|floatformat:2 }}</div>
+          </div>
+        {% endfor %}
+        <hr />
+        <div class="cart-item">
+          <strong>Total:</strong>
+          <strong>Rs. {{ total|floatformat:2 }}</strong>
+        </div>
+      {% else %}
+        <p>Your cart is empty. <a href="{% url 'shop_home' %}">Go shopping</a></p>
+      {% endif %}
+    </div>
+
+    {% if cart_items %}
+    <!-- Checkout Form -->
+    <form method="POST" action="{% url 'shop_checkout' %}">
+      {% csrf_token %}
+
+      <label for="full_name">Full Name</label>
+      <input type="text" id="full_name" name="full_name" placeholder="John Doe" required />
+
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" placeholder="john@example.com" required />
+
+      <label for="address">Shipping Address</label>
+      <textarea id="address" name="address" rows="3" placeholder="123 Main St, City, Country" required></textarea>
+
+      <label for="payment_method">Payment Method</label>
+      <select id="payment_method" name="payment_method" required>
+        <option value="" disabled selected>Select Payment Method</option>
+        <option value="credit_card">Credit Card</option>
+        <option value="paypal">PayPal</option>
+        <option value="cod">Cash on Delivery</option>
+      </select>
+
+      <button type="submit">Place Order</button>
+    </form>
+    {% endif %}
+
+    {% if order_success %}
+    <div class="order-summary mt-4">
+      <p>Thank you for your order, {{ order_success.full_name }}!</p>
+      <p>Your order ID is <strong>{{ order_success.order_id }}</strong>.</p>
+      <p>We will send you a confirmation email at {{ order_success.email }}.</p>
+      <p><strong>Payment Method:</strong> {{ order_success.payment_method|title }}</p>
+      <p><strong>Total Paid:</strong> Rs. {{ order_success.total_price|floatformat:2 }}</p>
+    </div>
+    {% endif %}
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
+

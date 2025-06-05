@@ -1,0 +1,40 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm fixed-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold fs-4" href="{% url 'home' %}">DukaanPak.pk Store</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNav1" aria-controls="navbarNav1"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav1">
+      <ul class="navbar-nav gap-3">
+        <li class="nav-item"><a class="nav-link" href="{% url 'shop_home' %}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'shop_about' %}">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'shop_products' %}">Products</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'shop_contact' %}">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'shop_search' %}">Search</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'shop_track_order' %}">Track Order</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'shop_cart' %}">Cart</a></li>
+
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'profile' %}">
+            <i class="bi bi-person-circle"></i> {{ user.username }}
+          </a>
+        </li>
+        <li class="nav-item">
+          <form method="post" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="nav-link btn btn-link" style="padding: 0; color: white;">Logout</button>
+          </form>
+        </li>
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">Sign Up</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
