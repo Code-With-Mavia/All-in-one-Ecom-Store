@@ -1,0 +1,12 @@
+{
+  "name": "django-ecommerce",
+  "version": "1.0.0",
+  "description": "Django E-commerce Store",
+  "scripts": {
+    "build": "echo 'This is a Django project - no build step needed'",
+    "start": "echo 'This is a Django project - use python manage.py runserver'"
+  },
+  "keywords": ["django", "python", "ecommerce"],
+  "author": "",
+  "license": "ISC"
+}
